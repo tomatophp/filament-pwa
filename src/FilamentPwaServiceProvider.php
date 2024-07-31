@@ -2,7 +2,9 @@
 
 namespace TomatoPHP\FilamentPWA;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use TomatoPHP\FilamentPWA\Services\ManifestService;
 
 
 class FilamentPwaServiceProvider extends ServiceProvider
@@ -44,6 +46,8 @@ class FilamentPwaServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-
+        Blade::directive('filamentPWA', function () {
+            return view('filament-pwa::meta', ['config' => ManifestService::generate()])->render();
+        });
     }
 }

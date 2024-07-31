@@ -39,6 +39,15 @@ finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 ![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-hub.png)
 ![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-page.png)
 
+
+## Use Directive
+
+you can use directive to allow PWA on none-FilamentPHP pages, just add this directive to your blade file on top of `</head>`
+
+```html
+@filamentPWA
+```
+
 ## Publish Assets
 
 you can publish config file by use this command
