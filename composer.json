@@ -40,7 +40,6 @@
         "filament/notifications": "^3.0",
         "filament/spatie-laravel-settings-plugin": "^3.0",
         "tomatophp/filament-settings-hub": "^1.0",
-        "tomatophp/console-helpers": "^1.1",
-        "silviolleite/laravelpwa": "*"
+        "tomatophp/console-helpers": "^1.1"
     }
 }

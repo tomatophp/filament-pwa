@@ -38,10 +38,12 @@ class FilamentPwaServiceProvider extends ServiceProvider
            __DIR__.'/../resources/lang' => base_path('lang/vendor/filament-pwa'),
         ], 'filament-pwa-lang');
 
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
     }
 
     public function boot(): void
     {
-        //you boot methods here
+
     }
 }

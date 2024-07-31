@@ -7,27 +7,41 @@
 [![License](https://poser.pugx.org/tomatophp/filament-pwa/license.svg)](https://packagist.org/packages/tomatophp/filament-pwa)
 [![Downloads](https://poser.pugx.org/tomatophp/filament-pwa/d/total.svg)](https://packagist.org/packages/tomatophp/filament-pwa)
 
-
 get a PWA feature on your FilamentPHP app with settings from panel
+
+## Screenshots
+
+![Install](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/install.png)
+![App](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/app.png)
+![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/settings-hub.png)
+![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/settings-page.png)
 
 ## Installation
 
 ```bash
 composer require tomatophp/filament-pwa
 ```
+
+now you need to publish and migrate settings table
+
+```bash
+php artisan vendor:publish --provider="Spatie\LaravelSettings\LaravelSettingsServiceProvider" --tag="migrations"
+```
+
 after install your package please run this command
 
 ```bash
 php artisan filament-pwa:install
 ```
 
-## Publish Assets
+finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 
-you can publish config file by use this command
-
-```bash
-php artisan vendor:publish --tag="filament-pwa-config"
+```php
+->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make())
 ```
+
+
+## Publish Assets
 
 you can publish views file by use this command
 
@@ -39,12 +53,6 @@ you can publish languages file by use this command
 
 ```bash
 php artisan vendor:publish --tag="filament-pwa-lang"
-```
-
-you can publish migrations file by use this command
-
-```bash
-php artisan vendor:publish --tag="filament-pwa-migrations"
 ```
 
 ## Support
