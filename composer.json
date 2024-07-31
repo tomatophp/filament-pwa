@@ -1,0 +1,46 @@
+{
+    "name": "tomatophp/filament-pwa",
+    "type": "library",
+    "description": "get a PWA feature on your FilamentPHP app with settings from panel",
+    "keywords": [
+        "php",
+        "laravel",
+        "pwa",
+        "filament",
+        "tomatophp",
+        "filament-plugin"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TomatoPHP\\FilamentPWA\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TomatoPHP\\FilamentPWA\\FilamentPwaServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Fady Mondy",
+            "email": "info@3x1.io"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2",
+        "filament/filament": "^3.0",
+        "filament/notifications": "^3.0",
+        "filament/spatie-laravel-settings-plugin": "^3.0",
+        "tomatophp/filament-settings-hub": "^1.0",
+        "tomatophp/console-helpers": "^1.1",
+        "silviolleite/laravelpwa": "*"
+    }
+}
