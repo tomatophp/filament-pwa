@@ -8,13 +8,6 @@
 
 get a PWA feature on your FilamentPHP app with settings from panel
 
-## Screenshots
-
-![Install](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/install.png)
-![App](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/app.png)
-![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-hub.png)
-![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-page.png)
-
 ## Installation
 
 ```bash
@@ -39,8 +32,20 @@ finally reigster the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 ->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make())
 ```
 
+## Screenshots
+
+![Install](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/install.png)
+![App](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/app.png)
+![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-hub.png)
+![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-page.png)
 
 ## Publish Assets
+
+you can publish config file by use this command
+
+```bash
+php artisan vendor:publish --tag="filament-pwa-config"
+```
 
 you can publish views file by use this command
 
