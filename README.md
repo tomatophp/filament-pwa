@@ -3,7 +3,6 @@
 # Filament PWA
 
 [![Latest Stable Version](https://poser.pugx.org/tomatophp/filament-pwa/version.svg)](https://packagist.org/packages/tomatophp/filament-pwa)
-[![PHP Version Require](http://poser.pugx.org/tomatophp/filament-pwa/require/php)](https://packagist.org/packages/tomatophp/filament-pwa)
 [![License](https://poser.pugx.org/tomatophp/filament-pwa/license.svg)](https://packagist.org/packages/tomatophp/filament-pwa)
 [![Downloads](https://poser.pugx.org/tomatophp/filament-pwa/d/total.svg)](https://packagist.org/packages/tomatophp/filament-pwa)
 
