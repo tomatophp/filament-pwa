@@ -13,8 +13,8 @@ get a PWA feature on your FilamentPHP app with settings from panel
 
 ![Install](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/install.png)
 ![App](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/app.png)
-![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/settings-hub.png)
-![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/settings-page.png)
+![Setting Hub](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-hub.png)
+![Setting Page](https://raw.githubusercontent.com/tomatophp/filament-pwa/master/arts/setting-page.png)
 
 ## Installation
 
