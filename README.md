@@ -18,6 +18,7 @@ now you need to publish and migrate settings table
 
 ```bash
 php artisan vendor:publish --provider="Spatie\LaravelSettings\LaravelSettingsServiceProvider" --tag="migrations"
+php artisan filament-settings-hub:install 
 ```
 
 after install your package please run this command
