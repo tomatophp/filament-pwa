@@ -17,6 +17,20 @@ use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 
 class FilamentPWAPlugin implements Plugin
 {
+
+    public static bool $allowPWASettings = true;
+
+    public function allowPWASettings(bool $allow = true): static
+    {
+        static::$allowPWASettings = $allow;
+        return $this;
+    }
+
+    public function isSettingAllowed(): bool
+    {
+        return static::$allowPWASettings;
+    }
+
     public function getId(): string
     {
         return 'filament-pwa';
@@ -24,11 +38,9 @@ class FilamentPWAPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel
-            ->pages([
-                PWASettingsPage::class
-            ])
-            ->plugin(FilamentSettingsHubPlugin::make());
+        if($this->isSettingAllowed()){
+            $panel->pages( [PWASettingsPage::class])->plugin(FilamentSettingsHubPlugin::make());
+        }
     }
 
     public function boot(Panel $panel): void
@@ -38,14 +50,16 @@ class FilamentPWAPlugin implements Plugin
             fn () => view('filament-pwa::meta', ['config' => ManifestService::generate()])
         );
 
-        FilamentSettingsHub::register([
-            SettingHold::make()
-                ->label('filament-pwa::messages.settings.title')
-                ->icon('heroicon-o-sparkles')
-                ->route('filament.'.filament()->getCurrentPanel()->getId().'.pages.pwa-settings-page')
-                ->description('filament-pwa::messages.settings.description')
-                ->group('filament-settings-hub::messages.group'),
-        ]);
+        if($this->isSettingAllowed()) {
+            FilamentSettingsHub::register([
+                SettingHold::make()
+                    ->label('filament-pwa::messages.settings.title')
+                    ->icon('heroicon-o-sparkles')
+                    ->page(PWASettingsPage::class)
+                    ->description('filament-pwa::messages.settings.description')
+                    ->group('filament-settings-hub::messages.group'),
+            ]);
+        }
     }
 
     public static function make(): static

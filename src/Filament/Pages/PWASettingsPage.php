@@ -21,11 +21,14 @@ use Filament\Pages\Actions\ButtonAction;
 use Filament\Forms\Components\FileUpload;
 use TomatoPHP\FilamentPWA\Settings\PWASettings;
 use TomatoPHP\FilamentSettingsHub\Settings\SitesSettings;
+use TomatoPHP\FilamentSettingsHub\Traits\UseShield;
 use function Filament\Support\is_app_url;
 
 
 class PWASettingsPage extends SettingsPage
 {
+    use UseShield;
+    
     protected static ?string $navigationIcon = 'heroicon-o-cog';
 
     protected static string $settings = PWASettings::class;
