@@ -36,9 +36,9 @@
     ],
     "require": {
         "php": "^8.1|^8.2",
-        "filament/filament": "^3.0",
-        "filament/notifications": "^3.0",
-        "filament/spatie-laravel-settings-plugin": "^3.0",
+        "filament/filament": "^3.2",
+        "filament/notifications": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "tomatophp/filament-settings-hub": "^1.0",
         "tomatophp/console-helpers": "^1.1"
     }
