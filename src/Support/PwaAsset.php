@@ -1,0 +1,33 @@
+<?php
+
+namespace TomatoPHP\FilamentPWA\Support;
+
+use Illuminate\Support\Facades\Storage;
+
+class PwaAsset
+{
+    public static function disk(): string
+    {
+        return config('filament-pwa.upload_disk');
+    }
+
+    public static function url(?string $path, string $fallback): string
+    {
+        if (!$path) {
+            return $fallback;
+        }
+
+        return Storage::disk(static::disk())->url($path);
+    }
+
+    public static function mime(?string $path): string
+    {
+        if (!$path) {
+            return 'image/png';
+        }
+
+        $mime = Storage::disk(static::disk())->mimeType($path);
+
+        return $mime ?: 'image/png';
+    }
+}

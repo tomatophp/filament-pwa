@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Spatie\Sitemap\SitemapGenerator;
 use TomatoPHP\FilamentPWA\Settings\PWASettings;
+use TomatoPHP\FilamentPWA\Support\PwaAsset;
 use TomatoPHP\FilamentSettingsHub\Settings\SitesSettings;
 use TomatoPHP\FilamentSettingsHub\Traits\UseShield;
 use function Filament\Support\is_app_url;
@@ -54,6 +55,18 @@ class PWASettingsPage extends SettingsPage
                 ->route('filament.'.filament()->getCurrentPanel()->getId().'.pages.settings-hub'))
                 ->color('danger')
                 ->label(trans('filament-settings-hub::messages.back')),
+        ];
+    }
+
+    protected function pwaUpload(): array
+    {
+        $disk = config('filament-pwa.upload_disk');
+
+        return [
+            'disk' => $disk,
+            'visibility' => $disk === 'public'
+                ? 'public'
+                : 'private',
         ];
     }
 
@@ -112,49 +125,57 @@ class PWASettingsPage extends SettingsPage
                     ->schema([
                         FileUpload::make('pwa_icons_72x72')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_72x72'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_72x72")' : null),
                         FileUpload::make('pwa_icons_96x96')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_96x96'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_96x96")' : null),
                         FileUpload::make('pwa_icons_128x128')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_128x128'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_128x128")' : null),
                         FileUpload::make('pwa_icons_144x144')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_144x144'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_144x144")' : null),
                         FileUpload::make('pwa_icons_152x152')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_152x152'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_152x152")' : null),
                         FileUpload::make('pwa_icons_192x192')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_192x192'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_192x192")' : null),
                         FileUpload::make('pwa_icons_384x384')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_384x384'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_384x384")' : null),
                         FileUpload::make('pwa_icons_512x512')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_icons_512x512'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_icons_512x512")' : null),
@@ -165,61 +186,71 @@ class PWASettingsPage extends SettingsPage
                     ->schema([
                         FileUpload::make('pwa_splash_640x1136')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_640x1136'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_640x1136")' : null),
                         FileUpload::make('pwa_splash_750x1334')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_750x1334'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_750x1334")' : null),
                         FileUpload::make('pwa_splash_828x1792')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_828x1792'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_828x1792")' : null),
                         FileUpload::make('pwa_splash_1125x2436')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1125x2436'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1125x2436")' : null),
                         FileUpload::make('pwa_splash_1242x2208')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1242x2208'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1242x2208")' : null),
                         FileUpload::make('pwa_splash_1242x2688')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1242x2688'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1242x2688")' : null),
                         FileUpload::make('pwa_splash_1536x2048')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1536x2048'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1536x2048")' : null),
                         FileUpload::make('pwa_splash_1668x2224')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1668x2224'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1668x2224")' : null),
                         FileUpload::make('pwa_splash_1668x2388')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_1668x2388'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_1668x2388")' : null),
                         FileUpload::make('pwa_splash_2048x2732')
                             ->acceptedFileTypes(['image/png'])
-                            ->visibility('public')
+                            ->disk($this->pwaUpload()['disk'])
+                            ->visibility($this->pwaUpload()['visibility'])
                             ->label(trans('filament-pwa::messages.form.pwa_splash_2048x2732'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_splash_2048x2732")' : null),
@@ -257,15 +288,17 @@ class PWASettingsPage extends SettingsPage
         $getJsWorkerFile = File::exists($jsPath);
         if($getJsWorkerFile){
             $getJsWorkerFile = File::get($jsPath);
-            $icons = [];
-            $setting->pwa_icons_72x72 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_72x72 : "/images/icons/icon-72x72.png";
-            $setting->pwa_icons_96x96 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_96x96 : "/images/icons/icon-96x96.png";
-            $setting->pwa_icons_128x128 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_128x128 : "/images/icons/icon-128x128.png";
-            $setting->pwa_icons_144x144 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_144x144 : "/images/icons/icon-144x144.png";
-            $setting->pwa_icons_152x152 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_152x152 : "/images/icons/icon-152x152.png";
-            $setting->pwa_icons_192x192 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_192x192 : "/images/icons/icon-192x192.png";
-            $setting->pwa_icons_384x384 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_384x384 : "/images/icons/icon-384x384.png";
-            $setting->pwa_icons_512x512 ? $icons[] = '    "'.'/storage/' . $setting->pwa_icons_512x512 : "/images/icons/icon-512x512.png";
+
+            $icons = [
+                '    "' . PwaAsset::url($setting->pwa_icons_72x72, "/images/icons/icon-72x72.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_96x96, "/images/icons/icon-96x96.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_128x128, "/images/icons/icon-128x128.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_144x144, "/images/icons/icon-144x144.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_152x152, "/images/icons/icon-152x152.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_192x192, "/images/icons/icon-192x192.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_384x384, "/images/icons/icon-384x384.png"),
+                '    "' . PwaAsset::url($setting->pwa_icons_512x512, "/images/icons/icon-512x512.png"),
+            ];
 
             $value = str($getJsWorkerFile)->replace('ICONS', collect($icons)->implode('",'."\n") . '"')->__toString();
 
