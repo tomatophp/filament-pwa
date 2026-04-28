@@ -20,7 +20,7 @@ class PwaAsset
         $disk = static::disk();
 
         if ($disk === 'public') {
-            return ltrim($path, '/');
+            return '/storage/' . ltrim($path, '/');
         }
 
         return Storage::disk($disk)->url($path);
@@ -32,8 +32,12 @@ class PwaAsset
             return 'image/png';
         }
 
-        $mime = Storage::disk(static::disk())->mimeType($path);
-
-        return $mime ?: 'image/png';
+        try {
+            return Storage::disk(static::disk())
+                ->mimeType($path)
+                ?: 'image/png';
+        } catch (\Throwable) {
+            return 'image/png';
+        }
     }
 }

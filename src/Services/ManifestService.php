@@ -89,23 +89,25 @@ class ManifestService
         if ($setting->pwa_shortcuts) {
             foreach ($setting->pwa_shortcuts as $shortcut) {
 
-                $icon=[];
-
-                if(array_key_exists('icon',$shortcut)) {
-                    $icon = [
-                        'src' => PwaAsset::url($shortcut['icon'],''),
-                        'type' => PwaAsset::mime($shortcut['icon']),
-                        'sizes' => '72x72',
-                        'purpose' => 'any'
-                    ];
-                }
-
-                $basicManifest['shortcuts'][] = [
+                $shortcutManifest = [
                     'name' => trans($shortcut['name']),
                     'description' => trans($shortcut['description']),
                     'url' => $shortcut['url'],
-                    'icons' => [$icon]
                 ];
+
+                if (
+                    array_key_exists('icon', $shortcut)
+                    && filled($shortcut['icon'])
+                ) {
+                    $shortcutManifest['icons'] = [[
+                        'src' => PwaAsset::url($shortcut['icon'], ''),
+                        'type' => PwaAsset::mime($shortcut['icon']),
+                        'sizes' => '72x72',
+                        'purpose' => 'any',
+                    ]];
+                }
+
+                $basicManifest['shortcuts'][] = $shortcutManifest;
             }
         }
 

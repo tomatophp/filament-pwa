@@ -270,7 +270,8 @@ class PWASettingsPage extends SettingsPage
                                     ->label(trans('filament-pwa::messages.form.pwa_shortcuts_url')),
                                 FileUpload::make('icon')
                                     ->image()
-                                    ->visibility('public')
+                                    ->disk($this->pwaUpload()['disk'])
+                                    ->visibility($this->pwaUpload()['visibility'])
                                     ->label(trans('filament-pwa::messages.form.pwa_shortcuts_icon')),
                             ])
                             ->label(trans('filament-pwa::messages.form.pwa_shortcuts'))
