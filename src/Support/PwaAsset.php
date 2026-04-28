@@ -17,7 +17,13 @@ class PwaAsset
             return $fallback;
         }
 
-        return Storage::disk(static::disk())->url($path);
+        $disk = static::disk();
+
+        if ($disk === 'public') {
+            return ltrim($path, '/');
+        }
+
+        return Storage::disk($disk)->url($path);
     }
 
     public static function mime(?string $path): string
