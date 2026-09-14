@@ -13,5 +13,16 @@ return [
      * Allow Routes
      * ---------------------------------------------------------------
      */
-    "allow_routes" => true
+    "allow_routes" => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Upload Disk
+    |--------------------------------------------------------------------------
+    |
+    | Filesystem disk used for PWA icons, splash screens and shortcut icons.
+    |
+    */
+
+    'upload_disk' => env('FILAMENT_PWA_UPLOAD_DISK', 'public'),
 ];
