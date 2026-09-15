@@ -6,7 +6,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\File;
 use TomatoPHP\FilamentPWA\Services\ManifestService;
 
 class PWAController extends Controller
@@ -23,20 +22,7 @@ class PWAController extends Controller
 
     public function serviceWorker(): Response
     {
-        $jsPath = __DIR__ . '/../../../resources/js/serviceworker.js';
-
-        if (! File::exists($jsPath)) {
-            abort(404, 'Service worker file not found');
-        }
-
-        $content = File::get($jsPath);
-
-        $manifest = ManifestService::generate();
-        $iconsList = collect($manifest['icons'])->map(fn (array $icon): string => "'{$icon['src']}'")->implode(",\n    ");
-
-        $content = str_replace('ICONS', $iconsList, $content);
-
-        return response($content)
+        return response(ManifestService::serviceWorker())
             ->header('Content-Type', 'application/javascript')
             ->header('Cache-Control', 'public, max-age=3600');
     }

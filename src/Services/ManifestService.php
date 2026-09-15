@@ -2,16 +2,38 @@
 
 namespace TomatoPHP\FilamentPWA\Services;
 
-use TomatoPHP\FilamentPWA\Support\PwaAsset;
+use Illuminate\Support\Facades\File;
 use TomatoPHP\FilamentPWA\Settings\PWASettings;
+use TomatoPHP\FilamentPWA\Support\PwaAsset;
 
 class ManifestService
 {
-    public static function generate()
-    {
-        $setting = new PWASettings();
+    public const ICON_SIZES = ['72x72', '96x96', '128x128', '144x144', '152x152', '192x192', '384x384', '512x512'];
 
-        $basicManifest = [
+    public const SPLASH_SIZES = ['640x1136', '750x1334', '828x1792', '1125x2436', '1242x2208', '1242x2688', '1536x2048', '1668x2224', '1668x2388', '2048x2732'];
+
+    public static function generate(): array
+    {
+        $setting = new PWASettings;
+
+        $splash = [];
+        foreach (self::SPLASH_SIZES as $size) {
+            $splash[$size] = PwaAsset::url($setting->{'pwa_splash_'.$size}, "/images/icons/splash-{$size}.png");
+        }
+
+        $icons = [];
+        foreach (self::ICON_SIZES as $size) {
+            $path = $setting->{'pwa_icons_'.$size};
+
+            $icons[] = [
+                'src' => PwaAsset::url($path, "/images/icons/icon-{$size}.png"),
+                'type' => PwaAsset::mime($path),
+                'sizes' => $size,
+                'purpose' => 'any',
+            ];
+        }
+
+        $manifest = [
             'name' => $setting->pwa_app_name,
             'short_name' => $setting->pwa_short_name,
             'start_url' => asset($setting->pwa_start_url),
@@ -20,97 +42,49 @@ class ManifestService
             'background_color' => $setting->pwa_background_color,
             'orientation' => $setting->pwa_orientation,
             'status_bar' => $setting->pwa_status_bar,
-
-            'splash' => [
-                '640x1136' => PwaAsset::url($setting->pwa_splash_640x1136, '/images/icons/splash-640x1136.png'),
-                '750x1334' => PwaAsset::url($setting->pwa_splash_750x1334, '/images/icons/splash-750x1334.png'),
-                '828x1792' => PwaAsset::url($setting->pwa_splash_828x1792, '/images/icons/splash-828x1792.png'),
-                '1125x2436'=> PwaAsset::url($setting->pwa_splash_1125x2436, '/images/icons/splash-1125x2436.png'),
-                '1242x2208'=> PwaAsset::url($setting->pwa_splash_1242x2208, '/images/icons/splash-1242x2208.png'),
-                '1242x2688'=> PwaAsset::url($setting->pwa_splash_1242x2688, '/images/icons/splash-1242x2688.png'),
-                '1536x2048'=> PwaAsset::url($setting->pwa_splash_1536x2048, '/images/icons/splash-1536x2048.png'),
-                '1668x2224'=> PwaAsset::url($setting->pwa_splash_1668x2224, '/images/icons/splash-1668x2224.png'),
-                '1668x2388'=> PwaAsset::url($setting->pwa_splash_1668x2388, '/images/icons/splash-1668x2388.png'),
-                '2048x2732'=> PwaAsset::url($setting->pwa_splash_2048x2732, '/images/icons/splash-2048x2732.png'),
-            ],
-
-            'icons' => [
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_72x72, '/images/icons/icon-72x72.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_72x72),
-                    'sizes' => '72x72',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_96x96, '/images/icons/icon-96x96.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_96x96),
-                    'sizes' => '96x96',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_128x128, '/images/icons/icon-128x128.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_128x128),
-                    'sizes' => '128x128',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_144x144, '/images/icons/icon-144x144.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_144x144),
-                    'sizes' => '144x144',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_152x152, '/images/icons/icon-152x152.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_152x152),
-                    'sizes' => '152x152',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_192x192, '/images/icons/icon-192x192.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_192x192),
-                    'sizes' => '192x192',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_384x384, '/images/icons/icon-384x384.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_384x384),
-                    'sizes' => '384x384',
-                    'purpose' => 'any'
-                ],
-                [
-                    'src' => PwaAsset::url($setting->pwa_icons_512x512, '/images/icons/icon-512x512.png'),
-                    'type' => PwaAsset::mime($setting->pwa_icons_512x512),
-                    'sizes' => '512x512',
-                    'purpose' => 'any'
-                ],
-            ]
+            'splash' => $splash,
+            'icons' => $icons,
         ];
 
-        if ($setting->pwa_shortcuts) {
-            foreach ($setting->pwa_shortcuts as $shortcut) {
+        foreach ($setting->pwa_shortcuts ?? [] as $shortcut) {
+            $shortcutManifest = [
+                'name' => trans($shortcut['name'] ?? ''),
+                'description' => trans($shortcut['description'] ?? ''),
+                'url' => $shortcut['url'] ?? '/',
+            ];
 
-                $shortcutManifest = [
-                    'name' => trans($shortcut['name']),
-                    'description' => trans($shortcut['description']),
-                    'url' => $shortcut['url'],
-                ];
-
-                if (
-                    array_key_exists('icon', $shortcut)
-                    && filled($shortcut['icon'])
-                ) {
-                    $shortcutManifest['icons'] = [[
-                        'src' => PwaAsset::url($shortcut['icon'], ''),
-                        'type' => PwaAsset::mime($shortcut['icon']),
-                        'sizes' => '72x72',
-                        'purpose' => 'any',
-                    ]];
-                }
-
-                $basicManifest['shortcuts'][] = $shortcutManifest;
+            if (filled($shortcut['icon'] ?? null)) {
+                $shortcutManifest['icons'] = [[
+                    'src' => PwaAsset::url($shortcut['icon'], ''),
+                    'type' => PwaAsset::mime($shortcut['icon']),
+                    'sizes' => '72x72',
+                    'purpose' => 'any',
+                ]];
             }
+
+            $manifest['shortcuts'][] = $shortcutManifest;
         }
 
-        return $basicManifest;
+        return $manifest;
+    }
+
+    /**
+     * The service worker script with the current icons in its offline cache list.
+     */
+    public static function serviceWorker(): string
+    {
+        $icons = collect(static::generate()['icons'])
+            ->map(fn (array $icon): string => "    '".$icon['src']."'")
+            ->implode(",\n");
+
+        return str_replace('ICONS', $icons, File::get(__DIR__.'/../../resources/js/serviceworker.js'));
+    }
+
+    /**
+     * Write the service worker to public/serviceworker.js, for apps that serve it as a static file.
+     */
+    public static function publishServiceWorker(): void
+    {
+        File::put(public_path('serviceworker.js'), static::serviceWorker());
     }
 }

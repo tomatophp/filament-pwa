@@ -6,8 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
-use TomatoPHP\FilamentPWA\Settings\PWASettings;
-use TomatoPHP\FilamentPWA\Support\PwaAsset;
+use TomatoPHP\FilamentPWA\Services\ManifestService;
 
 class FilamentPwaInstall extends Command
 {
@@ -27,60 +26,32 @@ class FilamentPwaInstall extends Command
      */
     protected $description = 'install package and publish assets';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         $this->info('Publish Vendor Assets');
         $this->callSilent('optimize:clear');
 
-        $dbPath = File::files(database_path('migrations'));
-        $exists = false;
-        foreach ($dbPath as $path){
-            if(str($path->getFilename())->contains('_pwa_settings.php')){
-                $exists = true;
-            }
+        $exists = collect(File::files(database_path('migrations')))
+            ->contains(fn ($file): bool => str($file->getFilename())->contains('_pwa_settings.php'));
+
+        if (! $exists) {
+            File::copy(
+                __DIR__.'/../../database/migrations/pwa_settings.php.stub',
+                database_path('migrations/'.date('Y_m_d_His').'_pwa_settings.php'),
+            );
         }
-        //Register migrations
-        if (!$exists) {
-            $stubPath =  __DIR__ . '/../../database/migrations/pwa_settings.php.stub';
-            $databasePath = database_path('migrations/' . date('Y_m_d_His', time()) . '_pwa_settings.php');
 
-            File::copy($stubPath, $databasePath);
-        }
-        Artisan::call('migrate');
-        File::copyDirectory(__DIR__ . '/../../resources/images', public_path('images'));
+        Artisan::call('migrate', ['--force' => true]);
 
-        $setting = new PWASettings();
-        $jsPath = __DIR__ . '/../../resources/js/serviceworker.js';
-        $getJsWorkerFile = File::exists($jsPath);
-        if($getJsWorkerFile){
-            $getJsWorkerFile = File::get($jsPath);
-            $icons = [
-                '    "' . PwaAsset::url($setting->pwa_icons_72x72, "/images/icons/icon-72x72.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_96x96, "/images/icons/icon-96x96.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_128x128, "/images/icons/icon-128x128.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_144x144, "/images/icons/icon-144x144.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_152x152, "/images/icons/icon-152x152.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_192x192, "/images/icons/icon-192x192.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_384x384, "/images/icons/icon-384x384.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_512x512, "/images/icons/icon-512x512.png"),
-            ];
+        File::copyDirectory(__DIR__.'/../../resources/images', public_path('images'));
 
-            $value = str($getJsWorkerFile)->replace('ICONS', collect($icons)->implode('",'."\n") . '"')->__toString();
-
-            File::put(public_path('serviceworker.js'), $value);
-        }
+        ManifestService::publishServiceWorker();
 
         $this->info('Filament PWA installed successfully.');
+
+        return self::SUCCESS;
     }
 }

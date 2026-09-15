@@ -6,29 +6,29 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
 use TomatoPHP\FilamentPWA\Filament\Pages\PWASettingsPage;
 use TomatoPHP\FilamentPWA\Services\ManifestService;
-use TomatoPHP\FilamentPWA\Settings\PWASettings;
 use TomatoPHP\FilamentSettingsHub\Facades\FilamentSettingsHub;
 use TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin;
 use TomatoPHP\FilamentSettingsHub\Services\Contracts\SettingHold;
 
-
 class FilamentPWAPlugin implements Plugin
 {
-
-    public static bool $allowPWASettings = true;
+    /**
+     * Per plugin instance, so disabling the settings page on one panel does not disable it on the others.
+     */
+    protected bool $allowPWASettings = true;
 
     public function allowPWASettings(bool $allow = true): static
     {
-        static::$allowPWASettings = $allow;
+        $this->allowPWASettings = $allow;
+
         return $this;
     }
 
     public function isSettingAllowed(): bool
     {
-        return static::$allowPWASettings;
+        return $this->allowPWASettings;
     }
 
     public function getId(): string
@@ -38,8 +38,15 @@ class FilamentPWAPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if($this->isSettingAllowed()){
-            $panel->pages( [PWASettingsPage::class])->plugin(FilamentSettingsHubPlugin::make());
+        if (! $this->isSettingAllowed()) {
+            return;
+        }
+
+        $panel->pages([PWASettingsPage::class]);
+
+        // The settings page lives in the settings hub; add the hub unless the panel already registers it.
+        if (! $panel->hasPlugin('filament-settings-hub')) {
+            $panel->plugin(FilamentSettingsHubPlugin::make());
         }
     }
 
@@ -50,7 +57,7 @@ class FilamentPWAPlugin implements Plugin
             fn () => view('filament-pwa::meta', ['config' => ManifestService::generate()])
         );
 
-        if($this->isSettingAllowed()) {
+        if ($this->isSettingAllowed()) {
             FilamentSettingsHub::register([
                 SettingHold::make()
                     ->label('filament-pwa::messages.settings.title')
@@ -64,6 +71,6 @@ class FilamentPWAPlugin implements Plugin
 
     public static function make(): static
     {
-        return new static();
+        return app(static::class);
     }
 }

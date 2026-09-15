@@ -1,5 +1,7 @@
 <!-- Web Application Manifest -->
+@if (\Illuminate\Support\Facades\Route::has('pwa.manifest'))
 <link rel="manifest" href="{{ route('pwa.manifest') }}">
+@endif
 <!-- Chrome for Android theme color -->
 <meta name="theme-color" content="{{ $config['theme_color'] }}">
 

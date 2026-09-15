@@ -8,19 +8,19 @@ class PwaAsset
 {
     public static function disk(): string
     {
-        return config('filament-pwa.upload_disk');
+        return config('filament-pwa.upload_disk') ?: 'public';
     }
 
     public static function url(?string $path, string $fallback): string
     {
-        if (!$path) {
+        if (! $path) {
             return $fallback;
         }
 
         $disk = static::disk();
 
         if ($disk === 'public') {
-            return '/storage/' . ltrim($path, '/');
+            return '/storage/'.ltrim($path, '/');
         }
 
         return Storage::disk($disk)->url($path);
@@ -28,7 +28,7 @@ class PwaAsset
 
     public static function mime(?string $path): string
     {
-        if (!$path) {
+        if (! $path) {
             return 'image/png';
         }
 

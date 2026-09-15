@@ -9,23 +9,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Exceptions\Halt;
-use Filament\Support\Facades\FilamentView;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\File;
-use Spatie\Sitemap\SitemapGenerator;
+use TomatoPHP\FilamentPWA\Services\ManifestService;
 use TomatoPHP\FilamentPWA\Settings\PWASettings;
-use TomatoPHP\FilamentPWA\Support\PwaAsset;
-use TomatoPHP\FilamentSettingsHub\Settings\SitesSettings;
+use TomatoPHP\FilamentSettingsHub\Pages\SettingsHub;
 use TomatoPHP\FilamentSettingsHub\Traits\UseShield;
-use function Filament\Support\is_app_url;
-
 
 class PWASettingsPage extends SettingsPage
 {
@@ -35,8 +26,7 @@ class PWASettingsPage extends SettingsPage
 
     protected static string $settings = PWASettings::class;
 
-
-    protected static ?string $slug = "pwa-settings-page";
+    protected static ?string $slug = 'pwa-settings-page';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -51,8 +41,8 @@ class PWASettingsPage extends SettingsPage
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('back')->action(fn()=> redirect()
-                ->route('filament.'.filament()->getCurrentPanel()->getId().'.pages.settings-hub'))
+            Action::make('back')
+                ->url(fn (): string => SettingsHub::getUrl())
                 ->color('danger')
                 ->label(trans('filament-settings-hub::messages.back')),
         ];
@@ -69,7 +59,6 @@ class PWASettingsPage extends SettingsPage
                 : 'private',
         ];
     }
-
 
     public function form(Schema $schema): Schema
     {
@@ -277,33 +266,13 @@ class PWASettingsPage extends SettingsPage
                             ->label(trans('filament-pwa::messages.form.pwa_shortcuts'))
                             ->columnSpan(2)
                             ->hint(config('filament-settings-hub.show_hint') ? 'setting("pwa_shortcuts")' : null),
-                    ])
-            ])
+                    ]),
+            ]),
         ]);
     }
 
-    public function afterSave()
+    public function afterSave(): void
     {
-        $setting = new PWASettings();
-        $jsPath = __DIR__ . '/../../../resources/js/serviceworker.js';
-        $getJsWorkerFile = File::exists($jsPath);
-        if($getJsWorkerFile){
-            $getJsWorkerFile = File::get($jsPath);
-
-            $icons = [
-                '    "' . PwaAsset::url($setting->pwa_icons_72x72, "/images/icons/icon-72x72.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_96x96, "/images/icons/icon-96x96.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_128x128, "/images/icons/icon-128x128.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_144x144, "/images/icons/icon-144x144.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_152x152, "/images/icons/icon-152x152.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_192x192, "/images/icons/icon-192x192.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_384x384, "/images/icons/icon-384x384.png"),
-                '    "' . PwaAsset::url($setting->pwa_icons_512x512, "/images/icons/icon-512x512.png"),
-            ];
-
-            $value = str($getJsWorkerFile)->replace('ICONS', collect($icons)->implode('",'."\n") . '"')->__toString();
-
-            File::put(public_path('serviceworker.js'), $value);
-        }
+        ManifestService::publishServiceWorker();
     }
 }

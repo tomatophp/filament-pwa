@@ -1,8 +1,8 @@
 <?php
 
 use Filament\Panel;
-use TomatoPHP\FilamentPWA\FilamentPWAPlugin;
 use TomatoPHP\FilamentPWA\Filament\Pages\PWASettingsPage;
+use TomatoPHP\FilamentPWA\FilamentPWAPlugin;
 
 beforeEach(function () {
     PWASettingsPage::$shouldRegisterNavigation = true;
