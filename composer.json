@@ -2,6 +2,7 @@
     "name": "tomatophp/filament-pwa",
     "type": "library",
     "description": "get a PWA feature on your FilamentPHP app with settings from panel",
+    "homepage": "https://tomatophp.com/en/plugins/filament-pwa",
     "keywords": [
         "php",
         "laravel",
